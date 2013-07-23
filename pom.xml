@@ -105,7 +105,7 @@
         <dependency>
             <groupId>pl.ais.commons</groupId>
             <artifactId>ais-commons-domain</artifactId>
-            <version>1.0.2-SNAPSHOT</version>
+            <version>1.0.2</version>
         </dependency>
     </dependencies>
 </project>
