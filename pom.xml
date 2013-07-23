@@ -9,7 +9,7 @@
 
     <groupId>pl.ais.commons</groupId>
     <artifactId>ais-commons-domain-us</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
     <name>AIS.PL Commons - Domain - US</name>
     <description>This library provides set of reusable components useful for modeling domain.</description>
