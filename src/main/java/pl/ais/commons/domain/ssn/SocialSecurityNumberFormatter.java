@@ -11,19 +11,32 @@ import org.springframework.format.Formatter;
 import pl.ais.commons.domain.stereotype.DomainService;
 
 /**
+ * {@link Formatter} implementation applicable to {@link SocialSecurityNumber}.
+ *
  * @author Warlock, AIS.PL
  * @since 1.0.1
  */
 @DomainService
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class SocialSecurityNumberFormatter implements Formatter<SocialSecurityNumber> {
 
     private final Pattern pattern = Pattern.compile("^(\\d{3})-(\\d{2})-(\\d{4})$");
 
-    @Autowired(required = false)
-    private SocialSecurityNumberFactory ssnFactory;
+    private final SocialSecurityNumberFactory ssnFactory;
 
     /**
-     * @see org.springframework.format.Parser#parse(java.lang.String, java.util.Locale)
+     * Constructs new instance.
+     *
+     * @param ssnFactory SSN factory to use
+     */
+    @Autowired
+    public SocialSecurityNumberFormatter(final SocialSecurityNumberFactory ssnFactory) {
+        super();
+        this.ssnFactory = ssnFactory;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public SocialSecurityNumber parse(final String text, final Locale locale) throws ParseException {
@@ -32,24 +45,20 @@ public class SocialSecurityNumberFormatter implements Formatter<SocialSecurityNu
             final Matcher matcher = pattern.matcher(text);
             if (matcher.matches()) {
                 result = ssnFactory.createSocialSecurityNumber(matcher.group(1), matcher.group(2), matcher.group(3));
+            } else {
+                throw new ParseException("Unable to parse provided text as SSN.", 0);
             }
         }
         return result;
     }
 
     /**
-     * @see org.springframework.format.Printer#print(java.lang.Object, java.util.Locale)
+     * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.NullAssignment")
     public String print(final SocialSecurityNumber ssn, final Locale locale) {
         return (null == ssn) ? null : ssn.getAreaNumber() + "-" + ssn.getGroupNumber() + "-" + ssn.getSerialNumber();
-    }
-
-    /**
-     * @param ssnFactory the Social Security Number factory to set
-     */
-    public void setSsnFactory(final SocialSecurityNumberFactory ssnFactory) {
-        this.ssnFactory = ssnFactory;
     }
 
 }

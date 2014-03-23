@@ -1,12 +1,15 @@
 package pl.ais.commons.domain.phone;
 
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 import javax.annotation.Nonnull;
 
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import pl.ais.commons.domain.stereotype.ValueObject;
+
+import com.google.common.base.Preconditions;
 
 /**
  * Phone number.
@@ -15,16 +18,31 @@ import pl.ais.commons.domain.stereotype.ValueObject;
  * @author Warlock, AIS.PL
  * @since 1.0
  */
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 @ValueObject
 public final class PhoneNumber implements Serializable {
 
-    private final String areaCode;
+    /**
+     * Identifies the original class version for which it is capable of writing streams and from which it can read.
+     *
+     * @see <a href="http://docs.oracle.com/javase/7/docs/platform/serialization/spec/version.html#6678">Type Changes Affecting Serialization</a>
+     */
+    private static final long serialVersionUID = 3151171327963441278L;
 
-    private final String exchangeCode;
+    private transient String areaCode;
 
-    private final String subscriberNumber;
+    private transient String exchangeCode;
 
-    private final String value;
+    private transient String subscriberNumber;
+
+    private String value;
+
+    /**
+     * Constructs new instance.
+     */
+    public PhoneNumber() {
+        super();
+    }
 
     /**
      * Constructs new instance.
@@ -36,10 +54,13 @@ public final class PhoneNumber implements Serializable {
     public PhoneNumber(@Nonnull final String areaCode, @Nonnull final String exchangeCode,
         @Nonnull final String subscriberNumber) {
         super();
-        if ((null == areaCode) || (null == exchangeCode) || (null == subscriberNumber)) {
-            throw new IllegalArgumentException(
-                "All of the area code, exchange code and subscriber number cannot be null.");
-        }
+
+        // Verify constructor requirements, ...
+        Preconditions.checkNotNull(areaCode, "Area code is required.");
+        Preconditions.checkNotNull(exchangeCode, "Exchange code is required.");
+        Preconditions.checkNotNull(subscriberNumber, "Subscriber number is required.");
+
+        // ... and initialize this instance fields.
         this.value = areaCode + exchangeCode + subscriberNumber;
         if (10 != value.length()) {
             throw new IllegalArgumentException("Provided value: '" + value
@@ -92,7 +113,22 @@ public final class PhoneNumber implements Serializable {
      */
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(value).toHashCode();
+        return value.hashCode();
+    }
+
+    private void readObject(final ObjectInputStream objectStream) throws IOException, ClassNotFoundException {
+
+        // Read object, ...
+        objectStream.defaultReadObject();
+
+        // ... and restore its state.
+        if (10 != value.length()) {
+            throw new InvalidObjectException("Deserialized value: '" + value
+                + "' is not a valid representation of the phone number.");
+        }
+        this.areaCode = value.substring(0, 3);
+        this.exchangeCode = value.substring(3, 6);
+        this.subscriberNumber = value.substring(6);
     }
 
     /**

@@ -4,11 +4,11 @@ import java.io.Serializable;
 
 import javax.annotation.Nonnull;
 
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import pl.ais.commons.domain.security.DecryptableValue;
 import pl.ais.commons.domain.stereotype.ValueObject;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 
 /**
  * Social Security Number.
@@ -18,8 +18,16 @@ import pl.ais.commons.domain.stereotype.ValueObject;
  * @author Warlock, AIS.PL
  * @since 1.0.1
  */
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 @ValueObject
 public final class SocialSecurityNumber implements Serializable {
+
+    /**
+     * Identifies the original class version for which it is capable of writing streams and from which it can read.
+     *
+     * @see <a href="http://docs.oracle.com/javase/7/docs/platform/serialization/spec/version.html#6678">Type Changes Affecting Serialization</a>
+     */
+    private static final long serialVersionUID = -8790247953875775970L;
 
     private transient String areaNumber;
 
@@ -27,6 +35,7 @@ public final class SocialSecurityNumber implements Serializable {
 
     private final DecryptableValue<String> representation;
 
+    @SuppressWarnings("PMD.AvoidUsingVolatile")
     private transient volatile String serialNumber;
 
     /**
@@ -36,19 +45,24 @@ public final class SocialSecurityNumber implements Serializable {
      */
     public SocialSecurityNumber(@Nonnull final DecryptableValue<String> representation) {
         super();
-        if (null == representation) {
-            throw new IllegalArgumentException("Encrypted SSN representation cannot be null.");
-        }
+
+        // Verify constructor requirements, ...
+        Preconditions.checkNotNull(representation, "Encrypted SSN representation cannot be null.");
+
+        // ... and initialize this instance fields.
         this.representation = representation;
     }
 
     /**
      * Decrypts and decomposes the SSN representation into area, group and serial numbers.
      */
+    @SuppressWarnings("PMD.AvoidDeeplyNestedIfStmts")
     private void decomposeIfNeeded() {
-        if (null == serialNumber) {
+        String decomposed = serialNumber;
+        if (null == decomposed) {
             synchronized (this) {
-                if (null == serialNumber) {
+                decomposed = serialNumber;
+                if (null == decomposed) {
                     // Decrypt SSN, ...
                     final String value = representation.decrypt();
 
@@ -118,7 +132,7 @@ public final class SocialSecurityNumber implements Serializable {
      */
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(representation).toHashCode();
+        return representation.hashCode();
     }
 
     /**
@@ -126,7 +140,7 @@ public final class SocialSecurityNumber implements Serializable {
      */
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("representation", representation).build();
+        return Objects.toStringHelper(this).add("representation", representation).toString();
     }
 
 }
