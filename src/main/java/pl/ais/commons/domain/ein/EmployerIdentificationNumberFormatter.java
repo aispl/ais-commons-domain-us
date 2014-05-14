@@ -5,6 +5,8 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.concurrent.Immutable;
+
 import org.springframework.format.Formatter;
 
 /**
@@ -13,6 +15,7 @@ import org.springframework.format.Formatter;
  * @author Warlock, AIS.PL
  * @since 1.1.1
  */
+@Immutable
 public class EmployerIdentificationNumberFormatter implements Formatter<EmployerIdentificationNumber> {
 
     private static final Pattern PATTERN = Pattern.compile("^(\\d{2})-?(\\d{7})$");
