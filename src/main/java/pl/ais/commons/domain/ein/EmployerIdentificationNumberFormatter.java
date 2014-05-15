@@ -16,9 +16,25 @@ import org.springframework.format.Formatter;
  * @since 1.1.1
  */
 @Immutable
-public class EmployerIdentificationNumberFormatter implements Formatter<EmployerIdentificationNumber> {
+public final class EmployerIdentificationNumberFormatter implements Formatter<EmployerIdentificationNumber> {
+
+    private static final EmployerIdentificationNumberFormatter INSTANCE = new EmployerIdentificationNumberFormatter();
 
     private static final Pattern PATTERN = Pattern.compile("^(\\d{2})-?(\\d{7})$");
+
+    /**
+     * @return shared (singleton) instance of {@link EmployerIdentificationNumberFormatter}
+     */
+    public static EmployerIdentificationNumberFormatter getInstance() {
+        return INSTANCE;
+    }
+
+    /**
+     * Constructs new instance.
+     */
+    private EmployerIdentificationNumberFormatter() {
+        super();
+    }
 
     /**
      * {@inheritDoc}
@@ -30,6 +46,8 @@ public class EmployerIdentificationNumberFormatter implements Formatter<Employer
             final Matcher matcher = PATTERN.matcher(text);
             if (matcher.matches()) {
                 result = new EmployerIdentificationNumber(matcher.group(1), matcher.group(2));
+            } else {
+                throw new ParseException("Unable to parse provided text as EIN.", 0);
             }
         }
         return result;
