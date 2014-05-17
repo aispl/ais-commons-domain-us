@@ -1,7 +1,6 @@
 package pl.ais.commons.domain.ssn;
 
 import javax.annotation.Nonnull;
-import javax.annotation.concurrent.ThreadSafe;
 
 import pl.ais.commons.domain.security.CryptographicServiceSupport;
 import pl.ais.commons.domain.stereotype.DomainService;
@@ -16,7 +15,6 @@ import com.google.common.base.Strings;
  * @since 1.0.1
  */
 @DomainService
-@ThreadSafe
 public final class SocialSecurityNumberFactory {
 
     private transient CryptographicServiceSupport<String> encryptor;
@@ -35,7 +33,11 @@ public final class SocialSecurityNumberFactory {
      */
     public SocialSecurityNumberFactory(@Nonnull final CryptographicServiceSupport<String> encryptor) {
         this();
+
+        // Verify constructor requirements, ...
         Preconditions.checkNotNull(encryptor, "Encryptor cannot be null.");
+
+        // ... and intialize this instance fields.
         this.encryptor = encryptor;
     }
 
