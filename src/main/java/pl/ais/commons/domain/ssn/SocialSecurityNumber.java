@@ -13,6 +13,11 @@ import com.google.common.base.Preconditions;
 /**
  * Social Security Number.
  *
+ * <p>
+ *     Note, that Social Security Number is serializable if and only if {@link DecryptableValue} being its representation
+ *     is serializable too.
+ * </p>
+ *
  * @see <a href="http://www.ssa.gov/history/ssn/geocard.html">The SSN Numbering Scheme</a>
  * @see <a href="http://en.wikipedia.org/wiki/Social_Security_number">Social Security Number</a>
  * @author Warlock, AIS.PL
