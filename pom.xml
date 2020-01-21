@@ -139,7 +139,7 @@
         <dependency>
             <groupId>pl.ais.commons</groupId>
             <artifactId>ais-commons-domain</artifactId>
-            <version>1.1.1-SNAPSHOT</version>
+            <version>1.2.4</version>
         </dependency>
     </dependencies>
 </project>
